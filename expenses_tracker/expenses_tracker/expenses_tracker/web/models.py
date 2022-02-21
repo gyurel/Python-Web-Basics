@@ -3,7 +3,7 @@ from django.db import models
 
 # Create your models here.
 # from expenses_tracker.settings import BASE_DIR
-from expenses_tracker.web.migrations.validators import only_letters_validator, MaxFileSizeInMbValidator
+from expenses_tracker.web.validators import only_letters_validator, MaxFileSizeInMbValidator
 
 
 class Profile(models.Model):
@@ -52,3 +52,22 @@ class Profile(models.Model):
         )
 
     )
+
+
+class Expense(models.Model):
+    TITLE_MAX_LENGTH = 30
+
+    title = models.CharField(
+        max_length=TITLE_MAX_LENGTH,
+    )
+
+    expense_image = models.URLField(
+        verbose_name='Link to image',
+    )
+
+    description = models.TextField(
+        null=True,
+        blank=True,
+    )
+
+    price = models.FloatField()
