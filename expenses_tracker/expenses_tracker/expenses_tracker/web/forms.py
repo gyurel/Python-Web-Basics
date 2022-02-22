@@ -1,7 +1,5 @@
 import os
-
 from django import forms
-
 from expenses_tracker.web.models import Profile, Expense
 
 
