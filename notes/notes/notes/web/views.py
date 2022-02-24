@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 
 # Create your views here.
-from notes.web.forms import CreateProfileForm, CreateNoteForm, EditNoteForm
+from notes.web.forms import CreateProfileForm, CreateNoteForm, EditNoteForm, DeleteNoteForm
 from notes.web.models import Profile, Note
 
 
@@ -47,6 +47,19 @@ def create_profile(request):
         return render(request, 'home-no-profile.html', context)
 
 
+def profile(request):
+    profile = get_profile()
+    count_of_notes = len(Note.objects.all())
+
+    context = {
+        'profile': profile,
+        'count_of_notes': count_of_notes,
+    }
+
+    return render(request, 'profile.html', context)
+
+
+
 def add_note(request):
     if request.method == 'POST':
         form = CreateNoteForm(request.POST)
@@ -84,14 +97,38 @@ def edit_note(request, pk):
     return render(request, 'note-edit.html', context)
 
 
-def delete_note(request):
-    pass
+def note_details(request, pk):
+    note = Note.objects.get(pk=pk)
+
+    context = {
+        'note': note,
+    }
+
+    return render(request, 'note-details.html', context)
 
 
-def note_details(request):
-    pass
+def delete_note(request, pk):
+    note = Note.objects.get(pk=pk)
+    if request.method == 'POST':
+        form = DeleteNoteForm(request.POST, instance=note)
+        if form.is_valid():
+            form.save()
+            return redirect('home page')
+    else:
+        form = DeleteNoteForm(instance=note)
+
+    context = {
+        'form': form,
+        'note': note,
+    }
+
+    return render(request, 'note-delete.html', context)
 
 
-def profile(request):
-    pass
+def delete_profile(request):
+    profile = get_profile()
+    notes = Note.objects.all()
+    profile.delete()
+    notes.delete()
 
+    return redirect('home page')
